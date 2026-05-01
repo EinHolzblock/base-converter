@@ -3,50 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Base Converter | Red & Black</title>
+    <title>Ultimate Base Converter</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Small additions to your red/black theme */
+        .copy-btn {
+            background: #333;
+            color: #e63946;
+            border: 1px solid #e63946;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            float: right;
+            margin-top: -30px;
+            margin-right: 5px;
+            transition: 0.2s;
+        }
+        .copy-btn:hover { background: #e63946; color: #fff; }
+        .legend {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: #888;
+        }
+        .legend h3 { color: #e63946; margin-top: 0; }
+        .legend-item { margin-bottom: 10px; border-bottom: 1px solid #222; padding-bottom: 5px; }
+        .legend-item b { color: #ccc; }
+    </style>
 </head>
 <body>
     <div class="card">
-        <h2>Number Converter</h2>
+        <h2>Advanced Converter</h2>
         
-        <div class="input-group">
-            <label for="dec">Decimal (Base 10)</label>
-            <input type="number" id="dec" placeholder="e.g. 255" oninput="convert(this, 10)">
+        <div id="inputs-container">
+            <!-- JavaScript will populate this to keep HTML clean -->
         </div>
 
-        <div class="input-group">
-            <label for="hex">Hexadecimal (Base 16)</label>
-            <input type="text" id="hex" placeholder="e.g. FF" oninput="convert(this, 16)">
-        </div>
-
-        <div class="input-group">
-            <label for="bin">Binary (Base 2)</label>
-            <input type="text" id="bin" placeholder="e.g. 11111111" oninput="convert(this, 2)">
+        <div class="legend">
+            <h3>Base Legend</h3>
+            <div class="legend-item"><b>Base 2 (Binary):</b> The language of computers (on/off).</div>
+            <div class="legend-item"><b>Base 6 (Senary):</b> Efficient for finger counting (6 per hand).</div>
+            <div class="legend-item"><b>Base 12 (Duodecimal):</b> Highly divisible; used in clocks and dozens.</div>
+            <div class="legend-item"><b>Base 20 (Vigesimal):</b> Ancient Maya system; based on fingers and toes.</div>
+            <div class="legend-item"><b>Base 36:</b> Max standard JS base; uses digits 0-9 and A-Z[cite: 1, 2].</div>
         </div>
     </div>
 
     <script>
+        const config = [
+            { id: '2', name: 'Binary (Base 2)', placeholder: '1010' },
+            { id: '6', name: 'Senary (Base 6)', placeholder: '123' },
+            { id: '8', name: 'Octal (Base 8)', placeholder: '77' },
+            { id: '10', name: 'Decimal (Base 10)', placeholder: '255' },
+            { id: '12', name: 'Duodecimal (Base 12)', placeholder: 'A2' },
+            { id: '16', name: 'Hexadecimal (Base 16)', placeholder: 'FF' },
+            { id: '20', name: 'Vigesimal (Base 20)', placeholder: 'J0' },
+            { id: '32', name: 'Base 32', placeholder: '7V' },
+            { id: '36', name: 'Base 36', placeholder: 'Z1' }
+        ];
+
+        const container = document.getElementById('inputs-container');
+
+        // Create inputs dynamically
+        config.forEach(base => {
+            const group = document.createElement('div');
+            group.className = 'input-group';
+            group.innerHTML = `
+                <label>${base.name}</label>
+                <input type="text" id="${base.id}" placeholder="${base.placeholder}" oninput="convert(this, ${base.id})">
+                <button class="copy-btn" onclick="copyValue('${base.id}')">Copy</button>
+            `;
+            container.appendChild(group);
+        });
+
         function convert(input, base) {
             const val = input.value.trim();
-            const decInput = document.getElementById('dec');
-            const hexInput = document.getElementById('hex');
-            const binInput = document.getElementById('bin');
-
             if (!val) {
-                decInput.value = "";
-                hexInput.value = "";
-                binInput.value = "";
+                config.forEach(b => document.getElementById(b.id).value = "");
                 return;
             }
 
             const decimalValue = parseInt(val, base);
-
             if (isNaN(decimalValue)) return;
 
-            if (base !== 10) decInput.value = decimalValue;
-            if (base !== 16) hexInput.value = decimalValue.toString(16).toUpperCase();
-            if (base !== 2)  binInput.value = decimalValue.toString(2);
+            config.forEach(b => {
+                if (parseInt(b.id) !== base) {
+                    document.getElementById(b.id).value = decimalValue.toString(b.id).toUpperCase();
+                }
+            });
+        }
+
+        function copyValue(id) {
+            const copyText = document.getElementById(id);
+            copyText.select();
+            navigator.clipboard.writeText(copyText.value);
+            
+            // Temporary button feedback
+            const btn = copyText.nextElementSibling;
+            const original = btn.innerText;
+            btn.innerText = "✓";
+            setTimeout(() => btn.innerText = original, 1000);
         }
     </script>
 </body>
