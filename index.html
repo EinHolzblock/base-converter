@@ -3,45 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Base Converter</title>
-    <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; background: #f4f4f9; }
-        .card { background: white; padding: 2rem; border-radius: 8px; shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        label { font-weight: bold; font-size: 0.9rem; }
-    </style>
+    <title>Base Converter | Red & Black</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="card">
         <h2>Number Converter</h2>
         
-        <label>Decimal (Base 10)</label>
-        <input type="number" id="dec" placeholder="Enter Decimal" oninput="convert(this, 10)">
+        <div class="input-group">
+            <label for="dec">Decimal (Base 10)</label>
+            <input type="number" id="dec" placeholder="e.g. 255" oninput="convert(this, 10)">
+        </div>
 
-        <label>Hexadecimal (Base 16)</label>
-        <input type="text" id="hex" placeholder="Enter Hex" oninput="convert(this, 16)">
+        <div class="input-group">
+            <label for="hex">Hexadecimal (Base 16)</label>
+            <input type="text" id="hex" placeholder="e.g. FF" oninput="convert(this, 16)">
+        </div>
 
-        <label>Binary (Base 2)</label>
-        <input type="text" id="bin" placeholder="Enter Binary" oninput="convert(this, 2)">
+        <div class="input-group">
+            <label for="bin">Binary (Base 2)</label>
+            <input type="text" id="bin" placeholder="e.g. 11111111" oninput="convert(this, 2)">
+        </div>
     </div>
 
     <script>
         function convert(input, base) {
             const val = input.value.trim();
+            const decInput = document.getElementById('dec');
+            const hexInput = document.getElementById('hex');
+            const binInput = document.getElementById('bin');
+
             if (!val) {
-                document.querySelectorAll('input').forEach(i => i.value = "");
+                decInput.value = "";
+                hexInput.value = "";
+                binInput.value = "";
                 return;
             }
 
-            // Convert input to a standard Decimal integer
             const decimalValue = parseInt(val, base);
 
             if (isNaN(decimalValue)) return;
 
-            // Update other fields
-            if (base !== 10) document.getElementById('dec').value = decimalValue;
-            if (base !== 16) document.getElementById('hex').value = decimalValue.toString(16).toUpperCase();
-            if (base !== 2)  document.getElementById('bin').value = decimalValue.toString(2);
+            if (base !== 10) decInput.value = decimalValue;
+            if (base !== 16) hexInput.value = decimalValue.toString(16).toUpperCase();
+            if (base !== 2)  binInput.value = decimalValue.toString(2);
         }
     </script>
 </body>
